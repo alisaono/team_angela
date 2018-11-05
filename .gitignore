@@ -1,4 +1,4 @@
 node_modules/
 package-lock.json
 config.js
-db-connect.bat
+aws/
