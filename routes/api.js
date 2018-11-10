@@ -40,4 +40,15 @@ router.get('/population/states', function(req, res, next) {
     });
 });
 
+/* GET average monthly temperatures. */
+router.get('/temperatures', function(req, res, next) {
+  knex.select().from('temperatures').join('weather_stations', 'temperatures.id', 'weather_stations.id')
+    .then(function(data) {
+      res.json({ rows: data });
+    })
+    .catch(function(err) {
+      res.json({ rows: [] });
+    });
+});
+
 module.exports = router;
