@@ -18,4 +18,26 @@ router.get('/table/:id', function(req, res, next) {
     });
 });
 
+/* GET income by states. */
+router.get('/income/states', function(req, res, next) {
+  knex.select().from('state_incomes').join('states', 'state_incomes.id', 'states.id')
+    .then(function(data) {
+      res.json({ rows: data });
+    })
+    .catch(function(err) {
+      res.json({ rows: [] });
+    });
+});
+
+/* GET population by states. */
+router.get('/population/states', function(req, res, next) {
+  knex.select().from('state_populations').join('states', 'state_populations.id', 'states.id')
+    .then(function(data) {
+      res.json({ rows: data });
+    })
+    .catch(function(err) {
+      res.json({ rows: [] });
+    });
+});
+
 module.exports = router;

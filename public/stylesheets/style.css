@@ -1,8 +1,22 @@
 body {
-  padding: 50px;
+  margin: 0;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+.maps_container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.map_full_width {
+  width: 90%;
+  max-height: 90%;
+}
+
+.map_half_width {
+  width: 45%;
+  max-height: 90%;
 }
