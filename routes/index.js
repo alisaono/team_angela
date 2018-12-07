@@ -21,4 +21,9 @@ router.get('/record_gesture', function(req, res, next) {
   res.render('record_gesture');
 });
 
+/* GET map with state highlighted. */
+router.get('/highlight_state/:state', function(req, res, next) {
+  res.render('highlight_state', { state: req.params.state });
+});
+
 module.exports = router;
