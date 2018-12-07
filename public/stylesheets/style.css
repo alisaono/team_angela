@@ -20,3 +20,13 @@ body {
   width: 45%;
   max-height: 90%;
 }
+
+.map_800_width {
+  width: 800px;
+}
+
+#trace {
+  position: absolute;
+  left: 0;
+  top: 0;
+}

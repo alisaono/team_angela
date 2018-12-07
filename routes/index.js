@@ -16,4 +16,9 @@ router.get('/marker_map', function(req, res, next) {
   res.render('marker_map');
 });
 
+/* GET gesture recording map. */
+router.get('/record_gesture', function(req, res, next) {
+  res.render('record_gesture');
+});
+
 module.exports = router;
