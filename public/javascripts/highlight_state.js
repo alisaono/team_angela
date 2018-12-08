@@ -1,7 +1,7 @@
 google.charts.load('current', {
-  packages:['geochart'],
+  packages: ['geochart'],
   mapsApiKey: 'AIzaSyAjtJGdq1tPS1DfKqylSSuHii6VvIDGxsU', // TODO: domain restrict API access
-  callback: function() {
+  callback: function () {
     drawMap()
   }
 })
