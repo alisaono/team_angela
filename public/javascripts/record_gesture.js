@@ -11,6 +11,13 @@ let data = [] // list of [selected states, dragCoords]
 document.onkeyup = function(event) {
   if (event.code === 'KeyD') {
     console.log(data)
+
+    // also save data to a local json
+    let a = document.createElement("a");
+    let file = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    a.href = URL.createObjectURL(file);
+    a.download = 'gestures.json';
+    a.click();
   }
 }
 
