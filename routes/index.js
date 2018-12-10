@@ -6,9 +6,29 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Team Angela' });
 });
 
+/* GET map for point-and-click selection */
+router.get('/click', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_click' });
+});
+
+/* GET map for stabbing selection */
+router.get('/stab', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_stab' });
+});
+
 /* GET region map. */
-router.get('/region_map', function(req, res, next) {
-  res.render('region_map');
+router.get('/wrap_inclusive', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_inclusive' });
+});
+
+/* GET region map. */
+router.get('/wrap_exclusive', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_exclusives' });
+});
+
+/* GET region map. */
+router.get('/hull', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_hull' });
 });
 
 /* GET marker map. */

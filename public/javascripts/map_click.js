@@ -72,16 +72,22 @@ let selectedColor = '#27ae60'
 let defaultColor = '#eee'
 let stateColors = {}
 
+let mapWidth = 0 // to be calculated
+let mapHeight = 0 // to be calculated
+
 let toSelect = ['CA', 'OR', 'WA']
 let selections = new Set()
 
 let selectTimer = null
 let startSelect = 0 // to be set when first mouse click happens
 let endSelect = 0 // to be set when 'toSelect' states are selected
-let mouseEvents = []
+let mouseClicks = []
 
 $(document).ready(function() {
   // loadIncomes()
+  mapWidth = document.getElementById('map').offsetWidth
+  mapHeight = document.getElementById('map').offsetHeight
+  $('#map').addClass('clickable')
   colorThese(toSelect, toSelectColor, defaultColor)
   initMap()
   initPane()
@@ -102,20 +108,26 @@ function initPane() {
   for (let s of toSelect) {
     $('#to_select_list').append(`<li class="${s}"> ${stateNames[s]}</li>`)
   }
-  $('#state_incomes_map svg').on('click', 'path', detectFirstClick)
+  $('#map svg').on('click', 'path', detectFirstClick)
 }
 
-function detectFirstClick() { // start timer
+function detectFirstClick(event) { // start timer
+  mouseClicks.push([event.originalEvent.pageX / mapWidth, event.originalEvent.pageY / mapHeight, 0])
   startSelect = Date.now()
   selectTimer = setInterval(function() {
     let elapsed = (Date.now() - startSelect) / 1000
     $('#timer').text(`${elapsed.toFixed(1)}s`)
   }, 100)
-  $('#state_incomes_map svg').off('click', 'path', detectFirstClick)
+  $('#map svg').off('click', 'path', detectFirstClick)
+  document.addEventListener('click', recordClick)
+}
+
+function recordClick(event) {
+  mouseClicks.push([event.pageX / mapWidth, event.pageY / mapHeight, Date.now() - startSelect])
 }
 
 function initMap() {
-  $('#state_incomes_map svg').find('path').on('click',function(){
+  $('#map svg').find('path').on('click',function(){
     let state = $(this).attr('class')
     if (selections.has(state)) {
       selections.delete(state)
@@ -130,7 +142,9 @@ function initMap() {
       let diff = toSelect.filter(x => !selections.has(x))
       if (diff.length === 0) { // selection complete
         endSelect = Date.now()
+        document.removeEventListener('click', recordClick)
         clearInterval(selectTimer) // stop timer
+        console.log(mouseClicks)
       }
     }
   })
@@ -141,7 +155,7 @@ function colorThese(states, color, otherColor) {
   for (let id of stateIDs) {
     stateColors[id] = statesSet.has(id) ? color : otherColor
   }
-  $('#state_incomes_map svg').find('path').each(function(){
+  $('#map svg').find('path').each(function(){
     $(this).css({ fill: stateColors[$(this).attr('class')] })
   })
 }
@@ -156,7 +170,7 @@ function colorByIncome() {
     stateColors[s[0]] = rgb
   }
 
-  $('#state_incomes_map svg').find('path').each(function(){
+  $('#map svg').find('path').each(function(){
     let rgb = stateColors[$(this).attr('class')]
     $(this).css({ fill: `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`})
   })

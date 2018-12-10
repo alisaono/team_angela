@@ -44,7 +44,7 @@ body {
   top: 0;
 }
 
-#state_incomes_map svg path {
+#map.clickable svg path {
   cursor: pointer;
 }
 
