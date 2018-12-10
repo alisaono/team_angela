@@ -98,3 +98,20 @@ function ptInPoly(point, vs) {
 
     return inside;
 };
+
+function saveRegionHulls() {
+  let chulls = []
+  for (let a = 0; a < 50; a++) {
+    let normPts = []
+    for (let b = 0; b < regionPts[a].length; b++) {
+      normPts.push({ x: regionPts[a][b][0], y: regionPts[a][b][1] })
+    }
+    chulls.push(convexHull.makeHull(normPts))
+  }
+  let a = document.createElement('a')
+  let file = new Blob([JSON.stringify(chulls)], { type: 'application/json' })
+  a.href = URL.createObjectURL(file)
+  a.download = 'gestures.json'
+  a.click()
+  a.remove()
+}

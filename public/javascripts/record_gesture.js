@@ -11,7 +11,7 @@ let data = [] // list of [selected states, dragCoords]
 let body = document.body,
   html = document.documentElement
 let margin = 0
-let ptThresh = 0.0001
+let ptThresh = 0.0005
 
 window.onload = function () {
 }
@@ -38,14 +38,13 @@ function wrappingInclusiveGesture(gesture) {
   let gesturePts = []
 
   //compute gesturePts with .x and .y of gesture points to pass to convex hull function
-  for (let a = 0;a < gesture.length;a++) {
-    gesturePts.push({x: gesture[a][0], y: gesture[a][1]})
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
   }
-  let chull = convexHull.makeHull(gesturePts)
 
   for (let a = 0; a < 50; a++) {
     for (let b = 0; b < regionPts[a].length; b++) {
-      if (ptInPoly({x: regionPts[a][b][0], y: regionPts[a][b][1]}, chull)) {
+      if (ptInPoly({ x: regionPts[a][b][0], y: regionPts[a][b][1] }, gesturePts)) {
         result.add(stateCodes[a])
         break
       }
@@ -55,7 +54,56 @@ function wrappingInclusiveGesture(gesture) {
 }
 
 function wrappingExclusiveGesture(gesture) {
+  let result = new Set([])
+  let gesturePts = []
 
+  //compute gesturePts with .x and .y of gesture points to pass to convex hull function
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
+  }
+
+  for (let a = 0; a < 50; a++) {
+    let shouldAdd = true
+    for (let b = 0; b < regionPts[a].length; b++) {
+      if (!ptInPoly({ x: regionPts[a][b][0], y: regionPts[a][b][1] }, gesturePts)) {
+        shouldAdd = false
+        break
+      }
+    }
+    if (shouldAdd) {
+      result.add(stateCodes[a])
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
+}
+
+function hullInclusiveGesture(gesture) {
+  let result = new Set([])
+  let gesturePts = []
+
+  //compute gesturePts with .x and .y of gesture points to pass to convex hull function
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
+  }
+
+  for (let a = 0; a < 50; a++) {
+    //add state if state convex hull @regionHulls[a] intersects gesture polygon at gesturePts
+    for (let b = 0; b < gesturePts.length - 1; b++) {
+      for (let c = 0; c <= 20; c++) {
+        if (ptInPoly({
+          x: gesturePts[b].x + (gesturePts[b + 1].x - gesturePts[b].x) * c / 20,
+          y: gesturePts[b].y + (gesturePts[b + 1].y - gesturePts[b].y) * c / 20
+        }, regionHulls[a])) {
+          result.add(stateCodes[a])
+          break
+        }
+      }
+      if (result.has(stateCodes[a])) {
+        break
+      }
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
 }
 
 document.onkeyup = function (event) {
@@ -85,6 +133,7 @@ document.onkeyup = function (event) {
     console.log('stabbing:', stabbingGesture(gesture))
     console.log('wrapping inclusive:', wrappingInclusiveGesture(gesture))
     console.log('wrapping exclusive:', wrappingExclusiveGesture(gesture))
+    console.log('hull inclusive:', hullInclusiveGesture(gesture))
   }
 }
 
