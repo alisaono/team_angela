@@ -81,7 +81,7 @@ let dragCoords = [] // list of [x (normalized), y (normalized), time elapsed (ms
 
 let body = document.body, html = document.documentElement
 let margin = 0
-let ptThresh = 0.0001
+let ptThresh = 0.0005
 
 $(document).ready(function() {
   colorThese(toSelect, toSelectColor, defaultColor)
