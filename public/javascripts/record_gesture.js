@@ -38,14 +38,13 @@ function wrappingInclusiveGesture(gesture) {
   let gesturePts = []
 
   //compute gesturePts with .x and .y of gesture points to pass to convex hull function
-  for (let a = 0;a < gesture.length;a++) {
-    gesturePts.push({x: gesture[a][0], y: gesture[a][1]})
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
   }
-  let chull = convexHull.makeHull(gesturePts)
 
   for (let a = 0; a < 50; a++) {
     for (let b = 0; b < regionPts[a].length; b++) {
-      if (ptInPoly({x: regionPts[a][b][0], y: regionPts[a][b][1]}, chull)) {
+      if (ptInPoly({ x: regionPts[a][b][0], y: regionPts[a][b][1] }, gesturePts)) {
         result.add(stateCodes[a])
         break
       }
@@ -55,7 +54,45 @@ function wrappingInclusiveGesture(gesture) {
 }
 
 function wrappingExclusiveGesture(gesture) {
+  let result = new Set([])
+  let gesturePts = []
 
+  //compute gesturePts with .x and .y of gesture points to pass to convex hull function
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
+  }
+
+  for (let a = 0; a < 50; a++) {
+    let shouldAdd = true
+    for (let b = 0; b < regionPts[a].length; b++) {
+      if (!ptInPoly({ x: regionPts[a][b][0], y: regionPts[a][b][1] }, gesturePts)) {
+        shouldAdd = false
+        break
+      }
+    }
+    if (shouldAdd) {
+      result.add(stateCodes[a])
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
+}
+
+function hullInclusiveGesture(gesture) {
+  let result = new Set([])
+  let gesturePts = []
+
+  //compute gesturePts with .x and .y of gesture points to pass to convex hull function
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
+  }
+
+  for (let a = 0; a < 50; a++) {
+    let shouldAdd = true
+    if (shouldAdd) {
+      result.add(stateCodes[a])
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
 }
 
 document.onkeyup = function (event) {
@@ -85,6 +122,7 @@ document.onkeyup = function (event) {
     console.log('stabbing:', stabbingGesture(gesture))
     console.log('wrapping inclusive:', wrappingInclusiveGesture(gesture))
     console.log('wrapping exclusive:', wrappingExclusiveGesture(gesture))
+    console.log('hull inclusive:', hullInclusiveGesture(gesture))
   }
 }
 
