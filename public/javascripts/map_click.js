@@ -84,11 +84,10 @@ let endSelect = 0 // to be set when 'toSelect' states are selected
 let mouseClicks = []
 
 $(document).ready(function() {
-  // loadIncomes()
-  mapWidth = document.getElementById('map').offsetWidth
-  mapHeight = document.getElementById('map').offsetHeight
   $('#map').addClass('clickable')
+  $('#trace').remove()
   colorThese(toSelect, toSelectColor, defaultColor)
+  initDimens()
   initMap()
   initPane()
 })
@@ -102,6 +101,14 @@ function loadIncomes() {
     }
     colorByIncome()
   })
+}
+
+function initDimens() {
+  mapWidth = document.getElementById('map').offsetWidth
+  mapHeight = document.getElementById('map').offsetHeight
+  let margin = (document.documentElement.clientHeight - mapHeight) / 2
+  document.getElementById('map').style.marginTop = margin + 'px'
+  document.getElementById('map').style.marginBottom = margin + 'px'
 }
 
 function initPane() {
@@ -131,11 +138,11 @@ function initMap() {
     let state = $(this).attr('class')
     if (selections.has(state)) {
       selections.delete(state)
-      $(this).css({ fill: stateColors[$(this).attr('class')] })
+      $(`#map svg path.${state}`).css({ fill: stateColors[$(this).attr('class')] })
       $(`#selected_list > li.${state}`).remove()
     } else {
       selections.add(state)
-      $(this).css({ fill: selectedColor })
+      $(`#map svg path.${state}`).css({ fill: selectedColor })
       $('#selected_list').append(`<li class="${state}"> ${stateNames[state]}</li>`)
     }
     if (selections.size === toSelect.length) {

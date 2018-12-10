@@ -53,18 +53,18 @@ body {
   flex-flow: row;
 }
 
-.right_pane {
+#right_pane {
   padding: 40px;
   font-size: 16px;
   line-height: 1.5;
 }
 
-.right_pane #timer {
+#right_pane #timer {
   font-size: 40px;
   text-align: center;
 }
 
-.right_pane > div {
+#right_pane > div {
   margin-top: 20px;
 }
 
