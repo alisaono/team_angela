@@ -11,23 +11,52 @@ let data = [] // list of [selected states, dragCoords]
 let body = document.body,
   html = document.documentElement
 let margin = 0
+let ptThresh = 0.0001
 
 window.onload = function () {
 }
 
-function sqr(x) { return x * x }
-function dist2(v, w) { return sqr(v[0] - w[0]) + sqr(v[1] - w[1]) }
-function distToSegmentSquared(p, v, w) {
-  var l2 = dist2(v, w);
-  if (l2 == 0) return dist2(p, v);
-  var t = ((p[0] - v[0]) * (w[0] - v[0]) + (p[1] - v[1]) * (w[1] - v[1])) / l2;
-  t = Math.max(0, Math.min(1, t));
-  return dist2(p, {
-    x: v[0] + t * (w[0] - v[0]),
-    y: v[1] + t * (w[1] - v[1])
-  });
+//gesture analysis functions return a list [a, b] where a is time taken for query in ms and b is the set of states selected
+function stabbingGesture(gesture) {
+  let result = new Set([])
+  for (let a = 0; a < 50; a++) {
+    for (let b = 0; b < regionPts[a].length; b++) {
+      for (let c = 0; c < gesture.length - 1; c++) {
+        //test if regionPts[a][b] is close enough to line segment gesture[c], gesture[c + 1]
+        let dist = distToSegment(regionPts[a][b], gesture[c], gesture[c + 1])
+        if (dist < ptThresh) {
+          result.add(stateCodes[a])
+        }
+      }
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
 }
-function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
+
+function wrappingInclusiveGesture(gesture) {
+  let result = new Set([])
+  let gesturePts = []
+
+  //compute gesturePts with .x and .y of gesture points to pass to convex hull function
+  for (let a = 0;a < gesture.length;a++) {
+    gesturePts.push({x: gesture[a][0], y: gesture[a][1]})
+  }
+  let chull = convexHull.makeHull(gesturePts)
+
+  for (let a = 0; a < 50; a++) {
+    for (let b = 0; b < regionPts[a].length; b++) {
+      if (ptInPoly({x: regionPts[a][b][0], y: regionPts[a][b][1]}, chull)) {
+        result.add(stateCodes[a])
+        break
+      }
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
+}
+
+function wrappingExclusiveGesture(gesture) {
+
+}
 
 document.onkeyup = function (event) {
   if (event.code === 'KeyD') {
@@ -47,23 +76,15 @@ document.onkeyup = function (event) {
     gesture = dragCoords
     intended = states[statesIdx]
     console.log('intended states:', intended)
+    console.log('gesture:', gesture)
 
     //analyze with each gesture model
     //region points in regionPts
     //stabbing
-    stabbing = []
-    console.log(gesture)
-    console.log(regionPts[0])
-    for (let a = 0; a < 50; a++) {
-      for (let b = 0; b < regionPts[a].length; b++) {
-        for (let c = 0; c < gesture.length - 1; c++) {
-          //test if regionPts[a][b] is close enough to line segment gesture[c], gesture[c + 1]
-          //console.log(regionPts[a][b])
-          //console.log(distToSegment(regionPts[a][b], gesture[c], gesture[c + 1]))
-        }
-      }
-    }
-    console.log('stabbing analysis:', stabbing)
+
+    console.log('stabbing:', stabbingGesture(gesture))
+    console.log('wrapping inclusive:', wrappingInclusiveGesture(gesture))
+    console.log('wrapping exclusive:', wrappingExclusiveGesture(gesture))
   }
 }
 
