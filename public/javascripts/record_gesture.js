@@ -11,7 +11,7 @@ let data = [] // list of [selected states, dragCoords]
 let body = document.body,
   html = document.documentElement
 let margin = 0
-let ptThresh = 0.0001
+let ptThresh = 0.0005
 
 window.onload = function () {
 }
@@ -87,9 +87,20 @@ function hullInclusiveGesture(gesture) {
   }
 
   for (let a = 0; a < 50; a++) {
-    let shouldAdd = true
-    if (shouldAdd) {
-      result.add(stateCodes[a])
+    //add state if state convex hull @regionHulls[a] intersects gesture polygon at gesturePts
+    for (let b = 0; b < gesturePts.length - 1; b++) {
+      for (let c = 0; c <= 20; c++) {
+        if (ptInPoly({
+          x: gesturePts[b].x + (gesturePts[b + 1].x - gesturePts[b].x) * c / 20,
+          y: gesturePts[b].y + (gesturePts[b + 1].y - gesturePts[b].y) * c / 20
+        }, regionHulls[a])) {
+          result.add(stateCodes[a])
+          break
+        }
+      }
+      if (result.has(stateCodes[a])) {
+        break
+      }
     }
   }
   return [gesture[gesture.length - 1][2], Array.from(result)]
