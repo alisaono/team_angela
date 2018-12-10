@@ -81,7 +81,22 @@ let selections = new Set()
 let selectTimer = null
 let startSelect = 0 // to be set when first mouse click happens
 let endSelect = 0 // to be set when 'toSelect' states are selected
-let mouseClicks = []
+// let mouseClicks = []
+
+let data = []
+document.onkeyup = function (event) {
+  if (event.code === 'KeyD') {
+    console.log(data)
+
+    // also save data to a local json
+    let a = document.createElement('a')
+    let file = new Blob([JSON.stringify(data)], { type: 'application/json' })
+    a.href = URL.createObjectURL(file)
+    a.download = 'click.json'
+    a.click()
+    a.remove()
+  }
+}
 
 $(document).ready(function() {
   $('#map').addClass('clickable')
@@ -115,23 +130,31 @@ function initPane() {
   for (let s of toSelect) {
     $('#to_select_list').append(`<li class="${s}"> ${stateNames[s]}</li>`)
   }
-  $('#map svg').on('click', 'path', detectFirstClick)
+  $('#map svg').on('click', 'path', detectClickStart)
+  $('#redo').on('click', function() {
+    $('#redo').hide()
+    $('#timer').text('0.0s')
+    $('#selected_list').empty()
+    selections.clear()
+    colorThese(toSelect, toSelectColor, defaultColor) // reset coloring
+    $('#map svg').on('click', 'path', detectClickStart)
+  })
 }
 
-function detectFirstClick(event) { // start timer
-  mouseClicks.push([event.originalEvent.pageX / mapWidth, event.originalEvent.pageY / mapHeight, 0])
+function detectClickStart(event) { // start timer
+  // mouseClicks.push([event.originalEvent.pageX / mapWidth, event.originalEvent.pageY / mapHeight, 0])
   startSelect = Date.now()
   selectTimer = setInterval(function() {
     let elapsed = (Date.now() - startSelect) / 1000
     $('#timer').text(`${elapsed.toFixed(1)}s`)
   }, 100)
-  $('#map svg').off('click', 'path', detectFirstClick)
-  document.addEventListener('click', recordClick)
+  $('#map svg').off('click', 'path', detectClickStart)
+  // document.addEventListener('click', recordClick)
 }
 
-function recordClick(event) {
-  mouseClicks.push([event.pageX / mapWidth, event.pageY / mapHeight, Date.now() - startSelect])
-}
+// function recordClick(event) {
+//   mouseClicks.push([event.pageX / mapWidth, event.pageY / mapHeight, Date.now() - startSelect])
+// }
 
 function initMap() {
   $('#map svg').find('path').on('click',function(){
@@ -149,9 +172,10 @@ function initMap() {
       let diff = toSelect.filter(x => !selections.has(x))
       if (diff.length === 0) { // selection complete
         endSelect = Date.now()
-        document.removeEventListener('click', recordClick)
+        // document.removeEventListener('click', recordClick)
         clearInterval(selectTimer) // stop timer
-        console.log(mouseClicks)
+        data.push([endSelect - startSelect, toSelect])
+        $('#redo').show()
       }
     }
   })

@@ -61,8 +61,6 @@ let stateNames = {
     "WY": "Wyoming"
 }
 
-let minColor = [160, 160, 160] //rgb
-let maxColor = [0, 0, 0] //rgb
 let toSelectColor = '#888'
 let selectedColor = '#27ae60'
 let defaultColor = '#eee'
@@ -82,6 +80,21 @@ let dragCoords = [] // list of [x (normalized), y (normalized), time elapsed (ms
 let body = document.body, html = document.documentElement
 let margin = 0
 let ptThresh = 0.0005
+
+let data = []
+document.onkeyup = function (event) {
+  if (event.code === 'KeyD') {
+    console.log(data)
+
+    // also save data to a local json
+    let a = document.createElement('a')
+    let file = new Blob([JSON.stringify(data)], { type: 'application/json' })
+    a.href = URL.createObjectURL(file)
+    a.download = `${gestureType}.json`
+    a.click()
+    a.remove()
+  }
+}
 
 $(document).ready(function() {
   colorThese(toSelect, toSelectColor, defaultColor)
@@ -121,7 +134,10 @@ function colorThese(states, color, otherColor) {
 }
 
 function onMouseDown(event) {
-  // hideDragCoords()
+  selections.clear()
+  $('#selected_list').empty()
+  colorThese(toSelect, toSelectColor, defaultColor) // reset coloring
+  hideDragCoords()
   dragStart = Date.now()
   dragCoords = []
   document.addEventListener('mousemove', onMouseMove)
@@ -138,7 +154,6 @@ function onMouseMove(event) {
 }
 
 function onMouseUp(event) {
-  document.removeEventListener('mousedown', onMouseDown)
   document.removeEventListener('mousemove', onMouseMove)
   document.removeEventListener('mouseup', onMouseUp)
   showDragCoords()
@@ -159,7 +174,7 @@ function onMouseUp(event) {
     $(`#map svg path.${s}`).css({ fill: selectedColor })
     $('#selected_list').append(`<li class="${s}"> ${stateNames[s]}</li>`)
   }
-  console.log(dragCoords, analysis)
+  data.push([analysis[0], analysis[1], toSelect])
 }
 
 function showDragCoords() {
