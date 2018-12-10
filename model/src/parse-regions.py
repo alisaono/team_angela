@@ -1,8 +1,9 @@
+import selenium
+from selenium import webdriver
 import rain
 import configparser
 from PIL import Image
-import numpy
-import json
+from io import BytesIO
 
 config = configparser.ConfigParser()
 config.read(rain.toRelPath('../cfg/cfg.ini'))
@@ -15,28 +16,7 @@ stateDict = {'AK': 0, 'AL': 1, 'AR': 2, 'AZ': 3, 'CA': 4, 'CO': 5, 'CT': 6, 'DE'
 
 regions = []
 for a in range(len(states)):
-	im = Image.open(config['default']['screenshot-dir'] +
-					states[a] + '.png').convert('RGB')
-	hsvIm = im.convert('HSV')
-	npRGB = numpy.array(im)
-	npHSV = numpy.array(hsvIm)
-	hue = npHSV[:, :, 0]
-	lo, hi = 100, 140
-	lo = int((lo * 255) / 360)
-	hi = int((hi * 255) / 360)
-	green = numpy.where((hue > lo) & (hue < hi))
-	count = green[0].size
+	with open(config['default']['regions-pt-dir'] + states[a] + '.json') as f:
+		regions.append(json.load(f))
 
-	npRGB[green] = [0, 0, 0]
-	Image.fromarray(npRGB).save(
-		config['default']['regions-img-dir'] + states[a] + '.png')
-	print('pixels in ' + states[a] + ':', count)
-
-	region = numpy.array(green).T
-	region[:, [0, 1]] = region[:, [1, 0]]
-	width, height = im.size
-	region = region / numpy.array([width, height])[None, :]
-	regions.append(region.tolist())
-	
-with open(config['default']['regions-pt-dir'] + '../region-pts.json', 'w') as outfile:
-	json.dump(regions, outfile)
+#convex hull?

@@ -19,3 +19,4 @@ Regions are defined as a finite set of discrete points. In this case, it's all t
 2. Stabbing: A region is selected if any of its points are within a certain distance of the gesture line.
 3. Gesture-inclusive: The mouse gesture defines a polygon, and all regions with any of their points within that polygon are selected.
 4. Gesture-exclusive: The mouse gesture defines a polygon, and all regions with all of their points within that polygon are selected.
+5. Variations with convex-hull defined regions.

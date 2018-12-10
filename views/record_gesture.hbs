@@ -1,18 +1,30 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title> Record Gesture </title>
 
-    <link rel='stylesheet' href='/stylesheets/style.css'/>
+<head>
+  <title> Compare Gesture Models </title>
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    
-    <script type="text/javascript" src="/javascripts/record_gesture.js"></script>
-  </head>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
 
-  <body>
-    <div id="map" class="map_800_width"></div>
-    <canvas id="trace" width="800" height="500"></canvas>
-  </body>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <script type="text/javascript" src="/data/region-pts.js"></script>
+  <script type="text/javascript" src="/data/states.js"></script>
+
+  <script type="text/javascript" src="/javascripts/record_gesture.js"></script>
+</head>
+
+<body id="gesture-body">
+  <div id="gesture-main">
+    <div id="selector">
+      <div id="map"></div>
+      <canvas id="trace"></canvas>
+    </div>
+    <div id="results-panel">
+
+    </div>
+  </div>
+</body>
+
 </html>
