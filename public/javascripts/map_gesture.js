@@ -120,23 +120,6 @@ function colorThese(states, color, otherColor) {
   })
 }
 
-//gesture analysis functions return a list [a, b] where a is time taken for query in ms and b is the set of states selected
-function stabbingGesture(gesture) {
-  let result = new Set([])
-  for (let a = 0; a < 50; a++) {
-    for (let b = 0; b < regionPts[a].length; b++) {
-      for (let c = 0; c < gesture.length - 1; c++) {
-        //test if regionPts[a][b] is close enough to line segment gesture[c], gesture[c + 1]
-        let dist = distToSegment(regionPts[a][b], gesture[c], gesture[c + 1])
-        if (dist < ptThresh) {
-          result.add(stateCodes[a])
-        }
-      }
-    }
-  }
-  return [gesture[gesture.length - 1][2], Array.from(result)]
-}
-
 function onMouseDown(event) {
   // hideDragCoords()
   dragStart = Date.now()
@@ -162,7 +145,16 @@ function onMouseUp(event) {
   dragEnd = Date.now()
   clearInterval(selectTimer) // stop timer
 
-  analysis = stabbingGesture(dragCoords)
+  if (gestureType === 'stab') {
+    analysis = stabbingGesture(dragCoords)
+  } else if (gestureType === 'wrap_inclusive') {
+    analysis = stabbingGesture(dragCoords)
+  } else if (gestureType === 'wrap_exclusive') {
+    analysis = stabbingGesture(dragCoords)
+  } else { // hull inclusive
+    analysis = stabbingGesture(dragCoords)
+  }
+
   for (let s of analysis[1]) { // selected states based on gesture
     $(`#map svg path.${s}`).css({ fill: selectedColor })
     $('#selected_list').append(`<li class="${s}"> ${stateNames[s]}</li>`)
@@ -189,4 +181,94 @@ function hideDragCoords() {
     let ctx = canvas.getContext('2d')
     ctx.clearRect(0, 0, canvas.width, canvas.height)
   }
+}
+
+//gesture analysis functions return a list [a, b] where a is time taken for query in ms and b is the set of states selected
+function stabbingGesture(gesture) {
+  let result = new Set([])
+  for (let a = 0; a < 50; a++) {
+    for (let b = 0; b < regionPts[a].length; b++) {
+      for (let c = 0; c < gesture.length - 1; c++) {
+        //test if regionPts[a][b] is close enough to line segment gesture[c], gesture[c + 1]
+        let dist = distToSegment(regionPts[a][b], gesture[c], gesture[c + 1])
+        if (dist < ptThresh) {
+          result.add(stateCodes[a])
+        }
+      }
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
+}
+
+function wrappingInclusiveGesture(gesture) {
+  let result = new Set([])
+  let gesturePts = []
+
+  //compute gesturePts with .x and .y of gesture points to pass to convex hull function
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
+  }
+
+  for (let a = 0; a < 50; a++) {
+    for (let b = 0; b < regionPts[a].length; b++) {
+      if (ptInPoly({ x: regionPts[a][b][0], y: regionPts[a][b][1] }, gesturePts)) {
+        result.add(stateCodes[a])
+        break
+      }
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
+}
+
+function wrappingExclusiveGesture(gesture) {
+  let result = new Set([])
+  let gesturePts = []
+
+  //compute gesturePts with .x and .y of gesture points to pass to convex hull function
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
+  }
+
+  for (let a = 0; a < 50; a++) {
+    let shouldAdd = true
+    for (let b = 0; b < regionPts[a].length; b++) {
+      if (!ptInPoly({ x: regionPts[a][b][0], y: regionPts[a][b][1] }, gesturePts)) {
+        shouldAdd = false
+        break
+      }
+    }
+    if (shouldAdd) {
+      result.add(stateCodes[a])
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
+}
+
+function hullInclusiveGesture(gesture) {
+  let result = new Set([])
+  let gesturePts = []
+
+  //compute gesturePts with .x and .y of gesture points to pass to convex hull function
+  for (let a = 0; a < gesture.length; a++) {
+    gesturePts.push({ x: gesture[a][0], y: gesture[a][1] })
+  }
+
+  for (let a = 0; a < 50; a++) {
+    //add state if state convex hull @regionHulls[a] intersects gesture polygon at gesturePts
+    for (let b = 0; b < gesturePts.length - 1; b++) {
+      for (let c = 0; c <= 20; c++) {
+        if (ptInPoly({
+          x: gesturePts[b].x + (gesturePts[b + 1].x - gesturePts[b].x) * c / 20,
+          y: gesturePts[b].y + (gesturePts[b + 1].y - gesturePts[b].y) * c / 20
+        }, regionHulls[a])) {
+          result.add(stateCodes[a])
+          break
+        }
+      }
+      if (result.has(stateCodes[a])) {
+        break
+      }
+    }
+  }
+  return [gesture[gesture.length - 1][2], Array.from(result)]
 }

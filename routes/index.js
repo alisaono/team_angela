@@ -8,27 +8,27 @@ router.get('/', function(req, res, next) {
 
 /* GET map for point-and-click selection */
 router.get('/click', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_click' });
+  res.render('region_map', { map_script: 'map_click', map_type: 'click' });
 });
 
 /* GET map for stabbing selection */
 router.get('/stab', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_stab' });
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'stab' });
 });
 
 /* GET region map. */
 router.get('/wrap_inclusive', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_inclusive' });
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'wrap_inclusive' });
 });
 
 /* GET region map. */
 router.get('/wrap_exclusive', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_exclusives' });
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'wrap_exclusives' });
 });
 
 /* GET region map. */
 router.get('/hull', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_hull' });
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'hull' });
 });
 
 /* GET marker map. */
