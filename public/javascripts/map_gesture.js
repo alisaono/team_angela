@@ -148,11 +148,11 @@ function onMouseUp(event) {
   if (gestureType === 'stab') {
     analysis = stabbingGesture(dragCoords)
   } else if (gestureType === 'wrap_inclusive') {
-    analysis = stabbingGesture(dragCoords)
+    analysis = wrappingInclusiveGesture(dragCoords)
   } else if (gestureType === 'wrap_exclusive') {
-    analysis = stabbingGesture(dragCoords)
+    analysis = wrappingExclusiveGesture(dragCoords)
   } else { // hull inclusive
-    analysis = stabbingGesture(dragCoords)
+    analysis = hullInclusiveGesture(dragCoords)
   }
 
   for (let s of analysis[1]) { // selected states based on gesture
