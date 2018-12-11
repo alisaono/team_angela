@@ -75,7 +75,13 @@ let stateColors = {}
 let mapWidth = 0 // to be calculated
 let mapHeight = 0 // to be calculated
 
-let toSelect = ['CA', 'OR', 'WA']
+let toSelects = [
+  ['CA', 'OR', 'WA'],
+  ['MA', 'RI', 'CT', 'NY'],
+  ['SD', 'NE', 'KS', 'OK'],
+  ['SD', 'NE', 'KS', 'OK', 'TX', 'NM', 'CO', 'WY', 'MT']
+]
+let toSelect = toSelects[toSelectIdx]
 let selections = new Set()
 
 let selectTimer = null

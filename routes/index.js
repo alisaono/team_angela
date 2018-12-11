@@ -7,28 +7,28 @@ router.get('/', function(req, res, next) {
 });
 
 /* GET map for point-and-click selection */
-router.get('/click', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_click', map_type: 'click' });
+router.get('/click/:id', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_click', map_type: 'click', select_id: req.params.id });
 });
 
 /* GET map for stabbing selection */
-router.get('/stab', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_gesture', map_type: 'stab' });
+router.get('/stab/:id', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'stab', select_id: req.params.id });
 });
 
 /* GET region map. */
-router.get('/wrap_inclusive', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_gesture', map_type: 'wrap_inclusive' });
+router.get('/wrap_inclusive/:id', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'wrap_inclusive', select_id: req.params.id });
 });
 
 /* GET region map. */
-router.get('/wrap_exclusive', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_gesture', map_type: 'wrap_exclusive' });
+router.get('/wrap_exclusive/:id', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'wrap_exclusive', select_id: req.params.id });
 });
 
 /* GET region map. */
-router.get('/hull', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_gesture', map_type: 'hull' });
+router.get('/hull/:id', function(req, res, next) {
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'hull', select_id: req.params.id });
 });
 
 /* GET marker map. */
