@@ -73,7 +73,8 @@ let toSelects = [
   ['CA', 'OR', 'WA'],
   ['MA', 'RI', 'CT', 'NY'],
   ['SD', 'NE', 'KS', 'OK'],
-  ['SD', 'NE', 'KS', 'OK', 'TX', 'NM', 'CO', 'WY', 'MT']
+  ['SD', 'NE', 'KS', 'OK', 'TX', 'NM', 'CO', 'WY', 'MT'],
+  ['ID', 'WY', 'UT', 'CO', 'NM', 'AZ', 'NV']
 ]
 let toSelect = toSelects[toSelectIdx]
 let selections = new Set()
