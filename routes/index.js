@@ -23,7 +23,7 @@ router.get('/wrap_inclusive', function(req, res, next) {
 
 /* GET region map. */
 router.get('/wrap_exclusive', function(req, res, next) {
-  res.render('region_map', { map_script: 'map_gesture', map_type: 'wrap_exclusives' });
+  res.render('region_map', { map_script: 'map_gesture', map_type: 'wrap_exclusive' });
 });
 
 /* GET region map. */
