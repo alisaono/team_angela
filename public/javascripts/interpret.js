@@ -72,11 +72,13 @@ function hullInclusiveGesture(gesture) {
 
 	for (let a = 0; a < 50; a++) {
 		//add state if state convex hull @regionHulls[a] intersects gesture polygon at gesturePts
-		for (let b = 0; b < regionHulls[a].length - 1; b++) {
-			for (let c = 0; c <= 20; c++) {
+		let l = regionHulls[a].length
+		regionHulls[a].push(regionHulls[a][0])
+		for (let b = 0; b < l; b++) {
+			for (let c = 0; c <= 1000; c++) {
 				if (ptInPoly({
-					x: regionHulls[a][b].x + (regionHulls[a][b + 1].x - regionHulls[a][b].x) * c / 20,
-					y: regionHulls[a][b].y + (regionHulls[a][b + 1].y - regionHulls[a][b].y) * c / 20
+					x: regionHulls[a][b].x + (regionHulls[a][b + 1].x - regionHulls[a][b].x) * c / 1000,
+					y: regionHulls[a][b].y + (regionHulls[a][b + 1].y - regionHulls[a][b].y) * c / 1000
 				}, gesturePts)) {
 					result.add(stateCodes[a])
 					break
