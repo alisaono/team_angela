@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> Charts </title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
+  </head>
+
+  <body>
+    <div id='time' style='width: 800px; height: 600px;'></div>
+    <div id='time1' style='width: 800px; height: 600px;'></div>
+    <div id='time4' style='width: 800px; height: 600px;'></div>
+    <div id='accuracy' style='width: 800px; height: 600px;'></div>
+    <div id='accuracy1' style='width: 800px; height: 600px;'></div>
+    <script>
+      google.charts.load('current', {'packages':['corechart']})
+      google.charts.setOnLoadCallback(drawChart)
+
+      function drawChart() {
+        let timeRows = [
+          ['Gesture', 'Time'],
+          ['Click', 10.51],
+          ['Stab', 4.59],
+          ['Wrap-inclusive', 4.61],
+          ['Wrap-exclusive', 10.34],
+          ['Hull', 3.74]
+        ]
+        let time1Rows = [
+          ['Gesture', 'Time'],
+          ['Click', 1.98],
+          ['Stab', 1.08],
+          ['Wrap-inclusive', 0.81],
+          ['Wrap-exclusive', 2.07],
+          ['Hull', 0.44]
+        ]
+        let time4Rows = [
+          ['Gesture', 'Time'],
+          ['Click', 2.31],
+          ['Stab', 1.39],
+          ['Wrap-inclusive', 1.15],
+          ['Wrap-exclusive', 2.07],
+          ['Hull', 1.06]
+        ]
+        let accuracyRows = [
+          ['Gesture', 'Accuracy'],
+          ['Click', 1],
+          ['Stab', 0.9638145990482401],
+          ['Wrap-inclusive', 0.9804598372289666],
+          ['Wrap-exclusive', 0.9205595148050792],
+          ['Hull', 0.9693715086056253]
+        ]
+        let accuracy1Rows = [
+          ['Gesture', 'Accuracy'],
+          ['Click', 1],
+          ['Stab', 0.9486437613019889],
+          ['Wrap-inclusive', 0.9464607464607461],
+          ['Wrap-exclusive', 0.8856295380104898],
+          ['Hull', 0.939379181424636]
+        ]
+
+        makeChart(timeRows, 'time', 'Time taken on all 5 sets', 'time')
+        makeChart(time1Rows, 'time', 'Time taken on set 1', 'time1')
+        makeChart(time4Rows, 'time', 'Time taken on set 4', 'time4')
+        makeChart(accuracyRows, 'accuracy', 'Accuracy on all 5 sets', 'accuracy')
+        makeChart(accuracy1Rows, 'accuracy', 'Accuracy on set 1', 'accuracy1')
+      }
+
+      function makeChart(rows, type, title, div) {
+        let data = google.visualization.arrayToDataTable(rows)
+        let options = {
+          legend: { position: 'none' },
+          hAxis: { title: 'Gesture Type' }
+        }
+        options.time = type === 'time' ? 'Time (sec)' : 'Accuracy'
+        options.title = title
+
+        let view = new google.visualization.DataView(data)
+        view.setColumns([0,
+          1,
+          {
+            calc: "stringify",
+            sourceColumn: 1,
+            type: "string",
+            role: "annotation"
+          }])
+
+        let wrapper = new google.visualization.ChartWrapper({
+            chartType: 'ColumnChart',
+            options: options,
+            containerId: div,
+            dataTable: view
+        })
+        wrapper.draw()
+      }
+    </script>
+  </body>
+</html>
